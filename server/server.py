@@ -1,36 +1,44 @@
-from flask import Flask, request, jsonify
+from Flask import Flask, request, jsonify
+from flask_cors import CORS
 from pymongo import MongoClient
 from bson import ObjectId
 from dotenv import load_dotenv
 import os
 import bcrypt
 
+# Load environment variables from the .env file
 load_dotenv()
 
 app = Flask(__name__)
 
-mongo_url = os.getenv('MONGO_URL')
+# Enable CORS for all routes
+CORS(app)
+
+# Retrieve MongoDB URL and server port from environment variables
+mongo_url = os.getenv('MONGO_URL', 'mongodb://localhost:27017/')
 server_port = int(os.getenv('SERVER_PORT', 5000))
 
-# Connecting to MongoDB
+# Connect to MongoDB
 client = MongoClient(mongo_url)
 db = client['supamenu']
-collection = db['users']  
-login_attempts = db['login_attempts']  
+collection = db['users']  # Collection for user data
+login_attempts = db['login_attempts']  # Collection for login attempts
 
 def serialize_document(document):
     """Convert a MongoDB document to a serializable format."""
-    document['_id'] = str(document['_id'])  # Converting ObjectId to string
+    document['_id'] = str(document['_id'])  # Convert ObjectId to string
     return document
 
 @app.route('/documents', methods=['GET'])
 def get_all_documents():
+    """Fetch all documents from the 'users' collection."""
     documents = collection.find()
-    result = [serialize_document(doc) for doc in documents]  # Serializing each document
+    result = [serialize_document(doc) for doc in documents]  # Serialize each document
     return jsonify(result)
 
 @app.route('/login', methods=['POST'])
 def post_user_data():
+    """Handle user login."""
     data = request.get_json()
 
     email = data.get('email')
@@ -39,7 +47,7 @@ def post_user_data():
     user = collection.find_one({"email": email})
 
     if user and bcrypt.checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
-        # save the login attempt, if password matches
+        # Save the successful login attempt
         login_data = {
             "email": email,
             "status": "success"
@@ -47,16 +55,17 @@ def post_user_data():
         login_attempts.insert_one(login_data) 
         return jsonify({"message": "Login successful"}), 200
     else:
-        # save the failed attempt, it passwords do not match or no user found
+        # Save the failed login attempt
         login_data = {
             "email": email,
             "status": "failed"
         }
-        login_attempts.insert_one(login_data)  # Insert failed login attempt into the database
+        login_attempts.insert_one(login_data)
         return jsonify({"message": "Login failed"}), 401
-    
+
 @app.route('/register', methods=['POST'])
 def register_user():
+    """Handle user registration."""
     data = request.get_json()
 
     email = data.get('email')

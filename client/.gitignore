@@ -1,9 +1,0 @@
-# Client-side
-client/node_modules/
-client/package-lock.json
-client/.env
-
-# Server-side
-server/node_modules/
-server/.env
-server/package-lock.json

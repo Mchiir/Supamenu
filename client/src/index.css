@@ -99,3 +99,18 @@ body {
   width: 100%;
   padding-left: 1cm;
 }
+
+/* Dashboard */
+
+.Dashboard {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.Dashboard .confirmation {
+    padding: 20px;
+    background-color: rgb(227, 224, 224);
+    border-radius: 10px;
+}
