@@ -8,3 +8,5 @@ server/virtual_env
 server/.env
 server/package-lock.json
 test
+style.css
+test.html
