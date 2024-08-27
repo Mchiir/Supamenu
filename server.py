@@ -1,10 +1,10 @@
-from Flask import Flask, request, jsonify
+from flask import Flask, request, jsonify
 from flask_cors import CORS
-from pymongo import MongoClient
-from bson import ObjectId
-from dotenv import load_dotenv
 import os
 import bcrypt
+from pymongo  import MongoClient
+from bson import ObjectId
+from dotenv import load_dotenv
 
 # Load environment variables from the .env file
 load_dotenv()

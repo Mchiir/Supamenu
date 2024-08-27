@@ -4,8 +4,8 @@ client/package-lock.json
 client/.env
 
 # Server-side
-server/virtual_env
-server/.env
+.venv
+.env
 server/package-lock.json
 test
 style.css
